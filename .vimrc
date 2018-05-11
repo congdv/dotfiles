@@ -1,8 +1,14 @@
 " Author: congdv
 " Date: 2017 - 08 - 28
 " Don't put any lines in your vimrc that you don't understand.
+" https://dougblack.io/words/a-good-vimrc.html
 
+" Color {{{
+colorscheme badwolf
+"set background=dark
+set t_Co=256
 syntax enable                         " enable syntax processing
+" }}}
 " Indentation {{{
 set autoindent                        " use indentation of previous line
 set smartindent                       " use intelligent indentation for C
@@ -22,7 +28,7 @@ set encoding=utf-8                    " The encoding displayed.
 set fileencoding=utf-8                " The encoding written to file.
 " }}}
 " Leader {{{
-let mapleader="\<Space>"
+let mapleader=","
 " }}}
 
 " UI Config {{{
@@ -45,18 +51,36 @@ nnoremap <leader><space> :nohlsearch<CR> " Turn off search highlight
 " Swap file {{{
 "set directory=~/.vim/swap
 " }}}
+" Movement {{{
+" Move vertically by visual line
+nnoremap j gj
+nnoremap k gk
+" Move to beginning/end of line
+nnoremap B ^
+nnoremap E $
+" Move to next/previous blank line
+nnoremap <C-j> }
+nnoremap <C-k> {
+" Move to next/previous word
+nnoremap <C-h> b
+nnoremap <C-l> w
 
+" $/^ doesn't do anything
+nnoremap $ <nop>
+nnoremap ^ <nop>
+" }}}
 " Vim Plug {{{
 call plug#begin('~/.vim/plugged')
 Plug 'scrooloose/nerdtree'
 "Plug 'vim-scripts/c.vim'
 Plug 'jiangmiao/auto-pairs'
 Plug 'bling/vim-airline'
-Plug 'valloric/youcompleteme'
-"Plug 'ctrlpvim/ctrlp.vim'
+"Plug 'valloric/youcompleteme'
+Plug 'ctrlpvim/ctrlp.vim'
+Plug 'ervandew/supertab'
 "Plug 'nathanaelkane/vim-indent-guides'
 "Plug 'yggdroot/indentline'
-"Plug 'scrooloose/syntastic'
+Plug 'scrooloose/syntastic'
 call plug#end()
 " }}} // End Vim Plug
 
@@ -81,18 +105,18 @@ let g:ycm_open_loclist_on_ycm_diags = 1
 " }}} // End YouCompleteMe Plugin
 
 " Ctags Plugin {{{
-map <C-\> :tab split<CR>:exec("tag ".expand("<cword>"))<CR>    " Ctrl + \: Open the definition in a newtab
-map <C-p> :vsp <CR>:exec("tag ".expand("<cword>"))<CR>         " Alt + ] - Open the definition in a vertical split
+"map <C-\> :tab split<CR>:exec("tag ".expand("<cword>"))<CR>    " Ctrl + \: Open the definition in a newtab
+"map <C-p> :vsp <CR>:exec("tag ".expand("<cword>"))<CR>         " Alt + ] - Open the definition in a vertical split
 
 " Auto generate ctags
-au BufWritePost *.py,*.c,*.cpp,*.h silent! !eval 'ctags -R -o newtags; mv newtags tags' &
+"au BufWritePost *.py,*.c,*.cpp,*.h silent! !eval 'ctags -R -o newtags; mv newtags tags' &
 
 " }}} // End Ctags
 
 " Auto headers {{{
-autocmd bufnewfile *.c,*.cpp,*.h 0r ~/.vim/templates/c_header.tpl
-autocmd bufnewfile *.c,*.cpp,*.h exe "1," . 6 . "g/File :.*/s//File : " .expand("%")
-autocmd bufnewfile *.c,*.cpp,*.h exe "1," . 6 . "g/Date :.*/s//Date : " .strftime("%Y-%m-%d")
+"autocmd bufnewfile *.c,*.cpp,*.h 0r ~/.vim/templates/c_header.tpl
+"autocmd bufnewfile *.c,*.cpp,*.h exe "1," . 6 . "g/File :.*/s//File : " .expand("%")
+"autocmd bufnewfile *.c,*.cpp,*.h exe "1," . 6 . "g/Date :.*/s//Date : " .strftime("%Y-%m-%d")
 " }}} // End Auto headers
 
 " Indent Line {{{
@@ -106,5 +130,32 @@ augroup configgroup
         autocmd BufEnter *.sh setlocal tabstop=2
         autocmd BufEnter *.sh setlocal shiftwidth=2
         autocmd BufEnter *.sh setlocal softtabstop=2
+"        autocmd BufWritePre *.py, *.txt, *.md, *.c, *.cpp
+"                            \:call <SID>StripTrailingWhitespaces()
 augroup END
 " }}} // End Autogroups
+
+" TMUX {{{
+" allows currsor change in tmux mode
+if exists('$TMUX')
+    let &t_SI = "\<Esc>Ptmux;\<Esc>\<Esc>]50;CursorShape=1\x7\<Esc>\\"
+    let &t_EI = "\<Esc>Ptmux;\<Esc>\<Esc>]50;CursorShape=0\x7\<Esc>\\"
+else 
+    let &t_SI = "\<Esc>]50;CursorShape=1\x7"
+    let &t_EI = "\<Esc>]50;CursorShape=0\x7"
+endif
+" }}}
+
+" Cusstom Function {{{
+" strips trailing whitespace at the end of files. this
+" is called on buffer write in the autogroup above
+function! <SID>StripTrailingWhitespaces()
+    " save last search and cursor position
+    let _s=@/
+    let l = line(".")
+    let c = col(".")
+    %s/\s\+$//e
+    let @/=_s
+    call cursor(l,c)
+endfunction
+" }}}
