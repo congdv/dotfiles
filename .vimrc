@@ -2,6 +2,8 @@
 " Date: 2017 - 08 - 28
 " Don't put any lines in your vimrc that you don't understand.
 " https://dougblack.io/words/a-good-vimrc.html
+"
+" Install Vim Plug first to install plugin
 
 " Color {{{
 " colorscheme badwolf
