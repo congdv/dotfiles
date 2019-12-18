@@ -1,8 +1,7 @@
 all: install
 
 install:
-	cp -rf .vim ../
-	cp .vimrc ../
+	cp .vimrc ~/
 
 update:
-	cp ../.vimrc .
+	cp ~/.vimrc .

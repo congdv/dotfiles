@@ -4,7 +4,7 @@
 " https://dougblack.io/words/a-good-vimrc.html
 
 " Color {{{
-colorscheme badwolf
+" colorscheme badwolf
 "set background=dark
 set t_Co=256
 syntax enable                         " enable syntax processing
@@ -69,7 +69,10 @@ nnoremap <C-l> w
 nnoremap $ <nop>
 nnoremap ^ <nop>
 " }}}
-" Vim Plug {{{
+"
+"https://github.com/junegunn/vim-plug
+"
+"" Vim Plug {{{
 call plug#begin('~/.vim/plugged')
 Plug 'scrooloose/nerdtree'
 "Plug 'vim-scripts/c.vim'
